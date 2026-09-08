@@ -1,0 +1,723 @@
+<title>HOA Operations Inventory</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --ground: #FFFFFF;
+    --surface: #F6F5F3;
+    --surface-alt: #EDECEA;
+    --border: #DDDCD8;
+    --text: #1C1C19;
+    --text-2: #7A786F;
+    --text-3: #A8A6A0;
+    --accent: #2D5A8E;
+    --accent-light: #E8EFF7;
+    --built: #1A7A3D;
+    --built-bg: #E6F4EB;
+    --partial: #B8860B;
+    --partial-bg: #FBF3E0;
+    --planned: #3566A5;
+    --planned-bg: #E8EFF7;
+    --extend: #6B5B95;
+    --extend-bg: #EEEAF4;
+    --notstarted: #918F88;
+    --notstarted-bg: #F0EFED;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--ground);
+    color: var(--text);
+    font-family: 'Open Sans', 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 940px; margin: 0 auto; padding: 48px 32px 80px; }
+
+  /* Header */
+  .doc-header { margin-bottom: 40px; padding-bottom: 28px; border-bottom: 2px solid var(--text); }
+  .doc-header h1 {
+    font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 700;
+    letter-spacing: -0.02em; color: var(--text); margin-bottom: 8px;
+  }
+  .doc-header .subtitle { color: var(--text-2); font-size: 14px; }
+  .doc-header .meta-row {
+    display: flex; gap: 24px; margin-top: 14px; font-size: 12px;
+    color: var(--text-3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 36px;
+    padding: 14px 18px; background: var(--surface); border-radius: 6px; font-size: 12px; font-weight: 500;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+
+  /* Status pills */
+  .status {
+    display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 11px;
+    font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; text-transform: uppercase;
+  }
+  .status-built { background: var(--built-bg); color: var(--built); }
+  .status-partial { background: var(--partial-bg); color: var(--partial); }
+  .status-planned { background: var(--planned-bg); color: var(--planned); }
+  .status-extend { background: var(--extend-bg); color: var(--extend); }
+  .status-none { background: var(--notstarted-bg); color: var(--notstarted); }
+
+  .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+
+  /* Extends tag */
+  .extends-tag {
+    display: inline-block; font-size: 10px; color: var(--extend); font-weight: 500;
+    margin-left: 6px; opacity: 0.85;
+  }
+
+  /* Tier */
+  .tier { margin-bottom: 48px; }
+  .tier-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .tier-header h2 {
+    font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.01em;
+  }
+  .tier-tag {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 2px 8px; border-radius: 3px;
+  }
+  .tier-tag-priority { background: var(--accent); color: #fff; }
+  .tier-tag-nice { background: var(--partial-bg); color: var(--partial); }
+  .tier-tag-optional { background: var(--surface); color: var(--text-3); }
+  .tier-desc { color: var(--text-2); font-size: 13px; margin-bottom: 24px; }
+
+  /* Section */
+  .section { margin-bottom: 28px; }
+  .section h3 {
+    font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent);
+    margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid var(--border);
+  }
+
+  /* Tables */
+  .table-wrap { overflow-x: auto; border-radius: 6px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 13px; }
+  thead th {
+    background: var(--surface); font-weight: 600; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--text-2); padding: 8px 12px; text-align: left;
+    border-bottom: 1px solid var(--border); position: sticky; top: 0;
+  }
+  thead th.center { text-align: center; }
+  tbody td { padding: 7px 12px; border-bottom: 1px solid var(--surface-alt); vertical-align: middle; }
+  tbody td.center { text-align: center; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface); }
+  td.op { color: var(--text); }
+  td.status-cell { text-align: right; white-space: nowrap; }
+
+  /* Glossary */
+  .glossary { margin-top: 48px; padding-top: 28px; border-top: 2px solid var(--text); }
+  .glossary h2 {
+    font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700;
+    letter-spacing: -0.01em; margin-bottom: 16px;
+  }
+  .glossary-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  }
+  .glossary-item {
+    padding: 8px 12px; border-bottom: 1px solid var(--surface-alt);
+    font-size: 13px; line-height: 1.5;
+  }
+  .glossary-item:nth-child(odd) { border-right: 1px solid var(--surface-alt); }
+  .glossary-term {
+    font-weight: 600; color: var(--text); display: inline;
+  }
+  .glossary-def { color: var(--text-2); display: inline; }
+
+  .doc-footer {
+    margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--text-3); display: flex; justify-content: space-between;
+  }
+
+  @media print {
+    .page { padding: 24px 16px; max-width: 100%; }
+    tbody tr:hover { background: none; }
+    .glossary-grid { grid-template-columns: 1fr; }
+    .glossary-item:nth-child(odd) { border-right: none; }
+  }
+  @media (max-width: 640px) {
+    .page { padding: 24px 16px; }
+    .doc-header h1 { font-size: 22px; }
+    table { font-size: 12px; }
+    thead th, tbody td { padding: 6px 8px; }
+    .glossary-grid { grid-template-columns: 1fr; }
+    .glossary-item:nth-child(odd) { border-right: none; }
+  }
+</style>
+
+<div class="page">
+  <header class="doc-header">
+    <h1>HOA / Condo Operations Inventory</h1>
+    <p class="subtitle">Full inventory of management operations — grouped by priority, annotated with build status.</p>
+    <div class="meta-row">
+      <span>AccessGates Platform</span>
+      <span>September 2026</span>
+      <span>Tuluyan</span>
+    </div>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><span class="status status-built">Built</span> Shipped</div>
+    <div class="legend-item"><span class="status status-partial">Partial</span> Incomplete</div>
+    <div class="legend-item"><span class="status status-planned">Planned</span> Spec exists</div>
+    <div class="legend-item"><span class="status status-extend">Extend</span> Enhancement of built module</div>
+    <div class="legend-item"><span class="status status-none">Not started</span> No work yet</div>
+    <div class="legend-item"><span class="dot"></span> Persona involved</div>
+  </div>
+
+  <!-- ===================== PRIORITY ===================== -->
+  <div class="tier">
+    <div class="tier-header">
+      <h2>Core Operations</h2>
+      <span class="tier-tag tier-tag-priority">Priority</span>
+    </div>
+    <p class="tier-desc">Table-stakes for any HOA/condo platform. Without these, the product isn't viable.</p>
+
+    <div class="section">
+      <h3>Onboarding</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Provider</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Org provisioning + plan assignment</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Property/unit master list import</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Admin account seeding</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Unit roster upload (owners, tenants, lease dates)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Resident invitations (email/SMS/QR)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Accept invite, create account</td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Household member registration</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Vehicle registration + sticker/RFID issuance</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Guard account + PIN setup</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Gate hardware install (RFID readers, barriers)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Edge server deploy + network config</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Profile setup (contact info, emergency contacts)</td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Assessment/dues structure definition</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Set notification preferences (push/email/SMS)</td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Data migration from legacy system</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Training sessions for admin + guards</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Access Control &amp; Security</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Provider</th><th class="center">Admin</th><th class="center">Resident</th><th class="center">Guard</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">RFID/plate gate entry — tap/scan, barrier open, log</td><td class="center"></td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Condo lobby ID-validation check-in</td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Visitor QR pass creation</td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Walk-up approval (guard requests, resident approves)</td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Vehicle sticker requests (new, replacement, transfer)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Vehicle gate whitelist management</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Access credential revocation (lost RFID, moved out)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Entry/exit log audit trail</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Visitor pre-registration (bulk/event, recurring)</td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
+          <tr><td class="op">Blacklist management <span class="extends-tag">→ Credentials</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Temporary access cards <span class="extends-tag">→ Credentials</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Occupancy monitoring <span class="extends-tag">→ Entry logs</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Billing &amp; Finance</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Provider</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Assessment generation (monthly/quarterly/annual dues)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Special assessments (one-time levies)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Charge posting (dues, fines, fees, deposits, bonds)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">SOA generation + distribution</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Payment recording (cash, check, GCash, Maya, bank)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Auto-allocation (oldest-due-first)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Late penalty auto-computation</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Discounts / credits / waivers / write-offs</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Refund processing</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Collection reports (aging, delinquency, rate)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Budget creation + approval</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Accounting / payables</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Fundraising</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Online payment gateway (real-time collection)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
+          <tr><td class="op">Delinquency enforcement (restrict amenities, passes)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
+          <tr><td class="op">Interest calculation on overdue <span class="extends-tag">→ Penalty engine</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Advance payment handling <span class="extends-tag">→ Allocation</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Official receipt generation <span class="extends-tag">→ Payments</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Demand letter generation <span class="extends-tag">→ Delinquency</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Collections escalation workflow <span class="extends-tag">→ Delinquency</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">PDC (post-dated check) tracking <span class="extends-tag">→ Payments</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Communications</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Provider</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Announcements (general, urgent, scheduled)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">In-app messaging (admin ↔ resident)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Events calendar</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Email notifications</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Read receipt / acknowledgment tracking</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
+          <tr><td class="op">Emergency broadcast <span class="extends-tag">→ Announcements</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Maintenance advisories <span class="extends-tag">→ Announcements</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Targeted notifications <span class="extends-tag">→ Announcements</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Push notifications (mobile app)</td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">SMS notifications</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Complaints &amp; Helpdesk</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Complaint filing (noise, neighbor disputes, damage, maintenance)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Category/priority classification</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Assignment to committee or staff</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Status updates to complainant</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Resolution documentation</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">SLA tracking <span class="extends-tag">→ Complaints</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Escalation workflow <span class="extends-tag">→ Complaints</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Satisfaction survey <span class="extends-tag">→ Complaints</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Work order generation + tracking <span class="extends-tag">→ Complaints</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Violations &amp; Enforcement</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Violation notice issuance</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Photo/video evidence attachment</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Fine schedule management</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Fine auto-posting to billing ledger</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Dispute / appeal process</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Violation history per unit/resident</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Progressive penalty escalation <span class="extends-tag">→ Fine schedule</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Cease-and-desist generation <span class="extends-tag">→ Violations</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Hearing scheduling</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Amenities &amp; Facilities</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Facility definition (pool, gym, clubhouse, court)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Booking calendar (slot-based, half/full day)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Approval workflow (auto-approve or admin-approve)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Capacity limits + conflict detection (exclusion constraint)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Booking fees + deposit collection (posted to billing)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Cancellation policy enforcement</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Maintenance schedule (no-booking days) <span class="extends-tag">→ Facilities</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Recurring bookings <span class="extends-tag">→ Bookings</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Equipment inventory <span class="extends-tag">→ Facilities</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Usage reports + utilization stats</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Waiver/liability form (digital sign)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Service Passes &amp; Contractors</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th class="center">Guard</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Helper/maid pass (register, photo, schedule)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Driver pass</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Contractor/worker pass (company, scope, validity)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Pass renewal + revocation</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Entry/exit logging per pass holder</td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Delivery rider pass <span class="extends-tag">→ Pass types</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Tutor/caregiver pass <span class="extends-tag">→ Pass types</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Background check integration</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Deliveries &amp; Packages</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th class="center">Guard</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Delivery logging (courier, parcel count, unit)</td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Resident notification ("package at lobby")</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Claim/pickup confirmation</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Unclaimed package escalation <span class="extends-tag">→ Deliveries</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Large delivery scheduling <span class="extends-tag">→ Deliveries</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Package locker integration (smart locker API)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Work Permits &amp; Renovation</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Renovation permit application (scope, contractor, timeline)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Construction bond/deposit collection</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Work schedule enforcement (allowed hours)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Completion inspection + bond release</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Daily worker headcount logging <span class="extends-tag">→ Permits</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Progress inspection scheduling <span class="extends-tag">→ Permits</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Penalty for overrun <span class="extends-tag">→ Permits + Violations</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Minor repair permit <span class="extends-tag">→ Permit types</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Architectural review committee approval</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Governance &amp; Elections</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Poll/survey creation (multiple choice, yes/no, ranking)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Voting eligibility rules (good standing, one vote/unit)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Resolution posting + voting</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Meeting minutes publication</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Board/committee management</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Secret ballot elections <span class="extends-tag">→ Polls</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Nomination + candidacy filing <span class="extends-tag">→ Polls</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Proxy voting / absentee ballot <span class="extends-tag">→ Polls</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Quorum tracking <span class="extends-tag">→ Polls</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Board meeting calendar + RSVP <span class="extends-tag">→ Events</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Board member term tracking <span class="extends-tag">→ Board mgmt</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Annual general assembly management</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Documents &amp; Records</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Document repository (bylaws, house rules, financial reports)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Access control (board-only vs all-residents)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Meeting minutes archive</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Version control <span class="extends-tag">→ Repository</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Legal document storage <span class="extends-tag">→ Repository</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Form templates <span class="extends-tag">→ Repository</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Document expiry alerts <span class="extends-tag">→ Repository</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Data Privacy &amp; Compliance (RA 10173)</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Provider</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Data subject rights (access, erasure)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Admin audit log (append-only, all mutations)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Retention policy + automated purge</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Consent collection + management</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-planned">Planned</span></td></tr>
+          <tr><td class="op">Privacy notice publication</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-planned">Planned</span></td></tr>
+          <tr><td class="op">Data processing agreement (HOA ↔ platform)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-planned">Planned</span></td></tr>
+          <tr><td class="op">Breach register + notification workflow</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-planned">Planned</span></td></tr>
+          <tr><td class="op">Tenant-isolation CI backstop + RLS</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-planned">Planned</span></td></tr>
+          <tr><td class="op">Data inventory / RoPA</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">DPO designation tracking</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">NPC registration tracking</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Privacy impact assessment</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Property &amp; Unit Management</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Unit directory (owner, tenant, contact, lease dates)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Unit type classification (studio, 1BR, lot, house+lot)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Floor area / lot area records</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Ownership transfer processing <span class="extends-tag">→ Units</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Lease registration + expiry tracking <span class="extends-tag">→ Units</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Vacancy tracking <span class="extends-tag">→ Units</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Subletting policy enforcement <span class="extends-tag">→ Units + Violations</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr><td class="op">Developer turnover tracking <span class="extends-tag">→ Units</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Move-In / Move-Out</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th class="center">Guard</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Move-in/out request (date, time, elevator reservation)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Clearance checklist (no outstanding dues, inspection)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Gate pass for movers/truck</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Unit condition report (photo, pre/post inspection)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Key/access card turnover</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Security deposit handling</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Utility final reading</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Platform Administration</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Org lifecycle (provision, suspend, archive)</td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Plan management (assign, upgrade, downgrade, overrides)</td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Platform audit log review</td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Retention/purge config + oversight</td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">DSR oversight (escalated data subject requests)</td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Feature flag rollout (gradual release)</td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
+          <tr><td class="op">System health monitoring</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Usage/billing metering (per-org SaaS billing)</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">White-label / custom domain management</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Support ticket system (org admin → platform support)</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Knowledge base / help center</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">SLA monitoring + uptime reporting</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">API rate limiting + abuse detection</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- ===================== NICE TO HAVE ===================== -->
+  <div class="tier">
+    <div class="tier-header">
+      <h2>Differentiation &amp; Delight</h2>
+      <span class="tier-tag tier-tag-nice">Nice to have</span>
+    </div>
+    <p class="tier-desc">Not blocking launch, but raises retention and perceived product quality.</p>
+
+    <div class="section">
+      <h3>Guard Operations</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Guard</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Guard shift scheduling + handover logs</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Guard tour / patrol tracking (NFC checkpoints)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Incident reporting (guard logs unusual events)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Guard performance report (response times)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Enhanced Billing</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Financial statements (balance sheet, P&amp;L, cash flow)</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Bank reconciliation</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Expense tracking + approval workflow</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Petty cash management</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Reserve fund management (sinking fund)</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Vendor/supplier payment tracking</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Budget vs actual reporting</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Tax filing support (BIR compliance)</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Audit preparation + external auditor portal</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Lien filing tracking</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Parking</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Assigned slot management (unit → slot mapping)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Visitor parking allocation</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Tandem/shared parking rules</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Parking violation enforcement</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Second car waitlist</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Motorcycle/bicycle parking</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Reporting &amp; Analytics</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Dashboard (collections, occupancy, access, requests)</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Delinquency aging report</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Access log report (entries/exits by date, gate, type)</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr><td class="op">Visitor volume report</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Amenity utilization report</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Complaint resolution report</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Violation frequency report</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Resident demographic report</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Custom report builder</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Export to Excel/PDF</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Scheduled report email delivery</td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Enhanced Communications</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Newsletter generation</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Multi-language support</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
+          <tr><td class="op">Notice board (digital signage)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- ===================== OPTIONAL ===================== -->
+  <div class="tier">
+    <div class="tier-header">
+      <h2>Long-tail &amp; Integrations</h2>
+      <span class="tier-tag tier-tag-optional">Optional</span>
+    </div>
+    <p class="tier-desc">For specific market segments or upsell. Not expected at launch.</p>
+
+    <div class="section">
+      <h3>Pets</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Pet registration (type, breed, name, photo, vaccination)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Vaccination record tracking + expiry alert</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Pet policy enforcement (leash, breed, size limit)</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Pet violation linkage</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Pet pass / ID issuance</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Insurance &amp; Risk</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Unit insurance proof upload + verification</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Insurance expiry alerts</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Association master policy tracking</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Incident/accident report filing</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Claim tracking</td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Disaster preparedness info (evacuation routes)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Emergency contact directory (fire, police, hospital)</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Advanced Security &amp; Hardware</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">CCTV integration + playback</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Tailgating / piggybacking detection (camera + AI)</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Panic button / duress alarm</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Emergency lockdown mode</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Biometric access (fingerprint, face recognition)</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Intercom / video call (gate to unit)</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Utility Sub-metering</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Water/electric/gas meter reading</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Per-unit utility billing</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>EV Charging</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">EV charging station booking</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Usage metering + billing</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Marketplace / Directory</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">Approved contractor/vendor directory</td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Service provider rating/review</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Community marketplace (buy/sell/trade)</td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="section">
+      <h3>Platform Growth</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Operation</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="op">White-label / branded app (app store listing)</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Custom domain management</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Digital signature integration (e-sign)</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Multi-region / disaster recovery</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Changelog / release notes publication</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Tenant screening / background check integration</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Package locker integration (smart locker API)</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr><td class="op">Common area inventory tracking</td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- ===================== GLOSSARY ===================== -->
+  <div class="glossary">
+    <h2>Glossary</h2>
+    <div class="glossary-grid">
+      <div class="glossary-item"><span class="glossary-term">Barangay</span> — <span class="glossary-def">Smallest administrative division in the Philippines; the local government unit a subdivision or condo falls under.</span></div>
+      <div class="glossary-item"><span class="glossary-term">BIR</span> — <span class="glossary-def">Bureau of Internal Revenue. PH tax authority; HOAs file annual returns.</span></div>
+      <div class="glossary-item"><span class="glossary-term">DPA</span> — <span class="glossary-def">Data Privacy Act (RA 10173). Philippine law governing personal data collection, processing, and storage.</span></div>
+      <div class="glossary-item"><span class="glossary-term">DPO</span> — <span class="glossary-def">Data Protection Officer. Person designated to oversee DPA compliance within an organization.</span></div>
+      <div class="glossary-item"><span class="glossary-term">DSR</span> — <span class="glossary-def">Data Subject Request. A resident's formal request to access, correct, or erase their personal data.</span></div>
+      <div class="glossary-item"><span class="glossary-term">Edge server</span> — <span class="glossary-def">On-premise device at the gate that runs offline when internet is down; syncs with cloud when connected.</span></div>
+      <div class="glossary-item"><span class="glossary-term">EV</span> — <span class="glossary-def">Electric Vehicle.</span></div>
+      <div class="glossary-item"><span class="glossary-term">GCash / Maya</span> — <span class="glossary-def">Leading Philippine e-wallet payment platforms. Most common digital payment methods for HOA dues.</span></div>
+      <div class="glossary-item"><span class="glossary-term">HOA</span> — <span class="glossary-def">Homeowners Association. The governing body of a subdivision, village, or condo; the buyer of AccessGates.</span></div>
+      <div class="glossary-item"><span class="glossary-term">Lien</span> — <span class="glossary-def">Legal claim filed against a property for unpaid HOA dues. Last resort in collections escalation.</span></div>
+      <div class="glossary-item"><span class="glossary-term">NFC</span> — <span class="glossary-def">Near-Field Communication. Short-range wireless tech used in guard patrol checkpoints and some access cards.</span></div>
+      <div class="glossary-item"><span class="glossary-term">NPC</span> — <span class="glossary-def">National Privacy Commission. PH government agency that enforces the Data Privacy Act.</span></div>
+      <div class="glossary-item"><span class="glossary-term">Org</span> — <span class="glossary-def">Organization. One HOA or condo association in AccessGates — the tenant boundary for multi-tenancy.</span></div>
+      <div class="glossary-item"><span class="glossary-term">P&amp;L</span> — <span class="glossary-def">Profit and Loss statement. Financial report showing income vs expenses over a period.</span></div>
+      <div class="glossary-item"><span class="glossary-term">PDC</span> — <span class="glossary-def">Post-Dated Check. Common PH payment method where residents issue checks dated for future months.</span></div>
+      <div class="glossary-item"><span class="glossary-term">RA 10173</span> — <span class="glossary-def">Republic Act 10173 — the Philippine Data Privacy Act of 2012.</span></div>
+      <div class="glossary-item"><span class="glossary-term">RFID</span> — <span class="glossary-def">Radio-Frequency Identification. Wireless tech used in gate access cards and vehicle stickers.</span></div>
+      <div class="glossary-item"><span class="glossary-term">RLS</span> — <span class="glossary-def">Row-Level Security. Postgres feature ensuring one org's data is invisible to another org's queries.</span></div>
+      <div class="glossary-item"><span class="glossary-term">RoPA</span> — <span class="glossary-def">Record of Processing Activities. DPA-required register of what data is collected, why, and how long it's kept.</span></div>
+      <div class="glossary-item"><span class="glossary-term">SLA</span> — <span class="glossary-def">Service Level Agreement. Target response/resolution times for complaints or support requests.</span></div>
+      <div class="glossary-item"><span class="glossary-term">SOA</span> — <span class="glossary-def">Statement of Account. Monthly billing summary sent to each unit showing charges, payments, and balance.</span></div>
+      <div class="glossary-item"><span class="glossary-term">Sinking fund</span> — <span class="glossary-def">Reserve fund collected from dues for major future expenses (roof repair, elevator replacement, repainting).</span></div>
+      <div class="glossary-item"><span class="glossary-term">Walk-up</span> — <span class="glossary-def">Unregistered visitor arriving at the gate without a pre-made pass; guard initiates real-time approval from resident.</span></div>
+    </div>
+  </div>
+
+  <footer class="doc-footer">
+    <span>AccessGates — Tuluyan</span>
+    <span>Last updated: September 2026</span>
+  </footer>
+</div>
