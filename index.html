@@ -1685,3 +1685,12 @@
     <span>Last updated: September 2026</span>
   </footer>
 </div>
+
+<script>
+function toggleDetail(row) {
+  var detail = row.nextElementSibling;
+  var isOpen = row.classList.contains('open');
+  row.classList.toggle('open', !isOpen);
+  detail.classList.toggle('visible', !isOpen);
+}
+</script>
