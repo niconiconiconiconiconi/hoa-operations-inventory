@@ -328,10 +328,10 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">GET /entries, PAGE guard/Activity.tsx, resident/Activity.tsx</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Visitor pre-registration (bulk/event, recurring)<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Visitor pre-registration (bulk/event, recurring)<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /visitor-passes, GET /visitor-passes, PAGE admin/Requests.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">Only single-visitor POST /visitor-passes exists (basic pass is Built separately, see Visitor QR pass creation). VisitorPassRow/VisitorPassIn have no bulk, recurrence, or event_id fields; create_visitor_pass() (access/use_cases.py:742) takes one visitor at a time. No bulk/recurring/event endpoint. This capability is 0% built.</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Blacklist management <span class="extends-tag">→ Credentials</span><span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -385,7 +385,7 @@
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Auto-allocation (oldest-due-first)<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /billing/payments (embedded logic), PAGE admin/Collections.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">billing/use_cases.py:831-840 sorts open charges by due_date ASC, splits one payment across multiple charges oldest-first, persists each split as a PaymentAllocation row; called from POST /billing/payments, PAGE admin/Collections.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Late penalty auto-computation<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -422,15 +422,15 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /fundraising, POST /fundraising/{id}/contribute, PAGE admin/Fundraising.tsx</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Online payment gateway (real-time collection)<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Online payment gateway (real-time collection)<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">POST /api/checkout, POST /api/billing/invoices/{id}/pay</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">PayMongo gateway is fully wired: paymongo.gateway.ts (real fetch to api.paymongo.com for checkout sessions + refunds), POST /api/bookings/{id}/checkout, POST /api/billing/invoices/{id}/pay, POST /api/billing/credits/topup, POST /api/me/leases/{id}/checkout, webhook routes /api/webhooks/paymongo and /api/webhooks/billing verify HMAC signatures and mark payments/invoices paid</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /billing/payments, POST /billing/me/pay, PAGE admin/Collections.tsx, resident/Billing.tsx</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Delinquency enforcement (restrict amenities, passes)<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Delinquency enforcement (restrict amenities, passes)<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">PATCH /memberships/{id}/flags, POST /credentials/{id}/suspend, PAGE admin/Residents.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">"delinquency_gating" feature flag exists but platform/features.py itself admits it is "documented, not enforced by the resolver". create_visitor_pass(), issue_credential(), request_walkup_approval(), request_booking(), issue_service_pass() all have zero delinquency checks. Delinquency is only surfaced as a read-only metric in GET /billing/aging (routes_billing.py:1076-1105), which returns delinquency_gating_enabled as a flag but never blocks anything. No booking, pass, or credential is ever blocked.</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Interest calculation on overdue <span class="extends-tag">→ Penalty engine</span><span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -864,10 +864,10 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /governance/minutes, POST /governance/minutes/{id}/publish, PAGE admin/Minutes.tsx, resident/Minutes.tsx</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Board/committee management<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Board/committee management<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /people, PATCH /people/{id}, PAGE admin/Team.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">No board/committee entity, CRUD, or lifecycle. POST /people, PATCH /people/{id}, PAGE admin/Team.tsx manage staff roles (guards/admins) only, not board seats, terms, or elections. Board.tsx is a dashboard view, not a board-member CRUD.</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Secret ballot elections <span class="extends-tag">→ Polls</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -960,7 +960,7 @@
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Data subject rights (access, erasure)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">(platform-level DSR handling)</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /dsr/requests, GET /dsr/requests, POST /dsr/requests/{id}/decide (routes_dsr.py:79-152); gather_person_data() and erase_person() (compliance/dsr.py) - erasure anonymizes PII while preserving financial/audit records; logged to admin_audit_log</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Admin audit log (append-only, all mutations)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -970,7 +970,7 @@
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Retention policy + automated purge<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">(platform-level)</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">compliance/retention.py: default per-data-class retention (entry_events 730d, directory_access_log/complaints/deliveries 365d, visitor/service_passes 90d), purge_expired() runs time-based org-scoped purge that never touches financial/audit rows; GET /platform/retention, PUT/DELETE /orgs/{org_id}/retention/{data_class}, POST /orgs/{org_id}/retention/run</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Consent collection + management<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-planned">Planned</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -1036,10 +1036,10 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">GET /api/unit-types, POST /api/unit-types, PAGE /operator/properties/[id]/unit-types</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /properties/{id}/units, PATCH /units/{id}, PAGE admin/Units.tsx</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Floor area / lot area records<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Floor area / lot area records<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">src/lib/domain/unit.ts (meta field)</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">PUT /properties/{id}/info, PAGE admin/PropertyDetail.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">src/lib/domain/unit.ts - generic `meta` bag only (Record&lt;string, number&gt;), no dedicated floor_area/lot_area field</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">Unit.area_sqm (db/models.py:109) is a real dedicated field, set via PATCH /units/{id}, and actually drives per-sqm billing (Assessment amount_basis="per_sqm", test_billing.py:616-655). PUT /properties/{id}/info has no area field at all - no property-level lot area exists.</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Ownership transfer processing <span class="extends-tag">→ Units</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
