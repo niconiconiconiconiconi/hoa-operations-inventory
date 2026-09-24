@@ -1403,10 +1403,10 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">src/app/layout.tsx:40 hardcoded lang="en" - no translation files or locale switching</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">apps/web/src/i18n/index.ts (i18next), locale dictionaries for en/fil/ceb, ag_lang localStorage key for runtime switching</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Notice board (digital signage)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Notice board (digital signage)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /announcements, GET /announcements/feed (routes_community.py:68-266), publish + email broadcast, PAGE resident announcements feed</span></div>
         </div></td></tr>
         </tbody>
       </table></div>
@@ -1490,10 +1490,10 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Emergency contact directory (fire, police, hospital)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Emergency contact directory (fire, police, hospital)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">only per-person contact fields via PATCH /people/{person_id} (routes_platform.py:817, emergency_contact_name/emergency_contact_phone) - not a community-wide directory of emergency services</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">PUT/GET /properties/{id}/info (emergency_hotlines free-text field), POST/GET/DELETE /properties/{id}/contacts (routes_platform.py:847-908, ContactKind enum admin/pmo/security/hotline, not literally fire/police/hospital), UI: InfoCard.tsx, GateInfoCard.tsx</span></div>
         </div></td></tr>
         </tbody>
       </table></div>
@@ -1605,10 +1605,10 @@
       <div class="table-wrap"><table>
         <thead><tr><th>Operation</th><th style="text-align:right">Status</th></tr></thead>
         <tbody>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">White-label / branded app (app store listing)<span class="expand-chevron">&#8250;</span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">White-label / branded app (app store listing)<span class="expand-chevron">&#8250;</span></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">email branding schema only: display_name/logo_url/brand_color columns on orgs (migration e7f8a9b0c1d2), premium_branding feature flag (platform/features.py:86) - no web UI, not a real white-label app experience</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Custom domain management<span class="expand-chevron">&#8250;</span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
