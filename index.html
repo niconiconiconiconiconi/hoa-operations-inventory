@@ -199,10 +199,10 @@
       <div class="table-wrap"><table>
         <thead><tr><th>Operation</th><th class="center">Provider</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
         <tbody>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Org provisioning + plan assignment<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Org provisioning + plan assignment<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">POST /api/organizations/create, POST /api/organizations</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /platform/orgs, PATCH /platform/orgs/{id}/plan, PAGE platform/PlatformOrgs.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">POST /api/organizations/create, POST /api/organizations (org creation only, no plan/tier field)</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /platform/orgs, PATCH /platform/orgs/{id}/plan, PAGE platform/PlatformOrgs.tsx (plan tier set on create; no dedicated upgrade/downgrade workflow or override audit trail)</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Property/unit master list import<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -221,7 +221,7 @@
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Resident invitations (email/SMS/QR)<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">POST /api/contacts, PAGE /operator/properties/[id]/contacts</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /properties/{id}/units/{id}/invites, PAGE admin/properties/PropertiesOwners.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Accept invite, create account<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
@@ -269,7 +269,7 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">PUT /me/notification-prefs, PAGE settings/AccountSettings.tsx</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Data migration from legacy system<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Data migration from legacy system<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /properties/{id}/units/import/preview (partial coverage only)</span></div>
@@ -389,8 +389,8 @@
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Late penalty auto-computation<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">src/lib/services/assessment-charge.service.ts:164</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /billing/penalties/run, PAGE admin/Billing.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">src/lib/services/assessment-charge.service.ts:164 (computes late fee on overdue charge at posting time)</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /billing/penalties/run (batch job over all overdue charges), PAGE admin/Billing.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Discounts / credits / waivers / write-offs<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -420,7 +420,7 @@
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Fundraising<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /fundraising, POST /fundraising/{id}/contribute, PAGE admin/Fundraising.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /funding-requests, POST /funding-requests/{id}/contribute, PAGE admin/Fundraising.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Online payment gateway (real-time collection)<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -483,7 +483,7 @@
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Events calendar<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">GET /api/events, POST /api/events, GET /api/hosted-events, PAGE /operator/properties/[id]/events</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">GET /api/hosted-events, POST /api/hosted-events, PAGE /operator/properties/[id]/events</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /events, GET /events, PUT /events/{id}/rsvp, PAGE resident/Events.tsx, admin/Events.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Email notifications<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
@@ -532,7 +532,7 @@
         <tbody>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Complaint filing (noise, neighbor disputes, damage, maintenance)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">POST /api/tasks, PAGE /operator/properties/[id]/tasks</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /complaints, PAGE resident/Requests.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Category/priority classification<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
@@ -548,7 +548,7 @@
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Status updates to complainant<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">POST /api/tasks/{id}/status</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">PATCH /complaints/{id}, POST /messages/threads, PAGE admin/Community.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">PATCH /complaints/{id}, PAGE resident/Requests.tsx (status field change only; POST /messages/threads is a separate manual message, not an automatic notification)</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Resolution documentation<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -594,19 +594,19 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">POST /api/violations (photos array)</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /attachments, POST /violations, PAGE admin/Community.tsx</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Fine schedule management<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Fine schedule management<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">PATCH /violations/{id}, PAGE admin/Community.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Fine auto-posting to billing ledger<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">POST /api/violations (triggers invoice)</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /billing/charges, POST /violations, PAGE admin/Billing.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Dispute / appeal process<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">POST /api/violations/{id}/status</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /violations/{id}/dispute, PAGE resident/Appeals.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Violation history per unit/resident<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
@@ -617,7 +617,7 @@
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Progressive penalty escalation <span class="extends-tag">→ Fine schedule</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">(via PATCH /violations/{id})</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">no dedicated escalation rule found - would require manual PATCH /violations/{id} per occurrence</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Cease-and-desist generation <span class="extends-tag">→ Violations</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -645,12 +645,12 @@
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Booking calendar (slot-based, half/full day)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">GET /api/hosted-events, GET /api/bookings/availability</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">POST /api/bookings, GET /api/bookings/availability</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /bookings, GET /bookings, GET /amenities/{id}/bookings, PAGE resident/Facilities.tsx, admin/Facilities.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Approval workflow (auto-approve or admin-approve)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">GET /api/hosted-events/{id}/status, POST /api/hosted-events/{id}/status</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">PATCH /api/hosted-events/{id}/status</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /bookings/{id}/confirm, POST /bookings/{id}/decline, PAGE admin/Facilities.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Capacity limits + conflict detection (exclusion constraint)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
@@ -665,7 +665,7 @@
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Cancellation policy enforcement<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">src/lib/domain/booking.ts:70-72</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">src/lib/domain/booking.ts:53-58</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /bookings/{id}/cancel, PAGE resident/Facilities.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Maintenance schedule (no-booking days) <span class="extends-tag">→ Facilities</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
@@ -705,7 +705,7 @@
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Helper/maid pass (register, photo, schedule)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /service-passes, POST /attachments, PAGE admin/ServiceOps.tsx, resident/Passes.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /service-passes, POST /attachments, PAGE admin/ServiceOps.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Driver pass<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -720,7 +720,7 @@
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Pass renewal + revocation<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /service-passes/{id}/revoke, PAGE admin/ServiceOps.tsx, resident/Passes.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /service-passes/{id}/revoke, PAGE admin/ServiceOps.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Entry/exit logging per pass holder<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -761,10 +761,10 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /messages/offline-email, POST /deliveries, PAGE admin/ServiceOps.tsx</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Claim/pickup confirmation<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Claim/pickup confirmation<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">PATCH /deliveries, PAGE admin/ServiceOps.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Unclaimed package escalation <span class="extends-tag">→ Deliveries</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -800,10 +800,10 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /billing/charges, POST /work-permits, PAGE admin/Billing.tsx</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Work schedule enforcement (allowed hours)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Work schedule enforcement (allowed hours)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">PATCH /work-permits/{id}, PAGE admin/ServiceOps.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">PATCH /work-permits/{id} updates permit fields, PAGE admin/ServiceOps.tsx (no dedicated allowed-hours enforcement logic)</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Completion inspection + bond release<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -813,22 +813,22 @@
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Daily worker headcount logging <span class="extends-tag">→ Permits</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">(via PATCH /work-permits/{id})</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">no dedicated headcount field - would require manual PATCH /work-permits/{id}</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Progress inspection scheduling <span class="extends-tag">→ Permits</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">(via PATCH /work-permits/{id})</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">no dedicated inspection scheduling field - would require manual PATCH /work-permits/{id}</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Penalty for overrun <span class="extends-tag">→ Permits + Violations</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">(via /work-permits + /violations)</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">no dedicated overrun-penalty rule - would combine manual PATCH /work-permits/{id} + POST /violations</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Minor repair permit <span class="extends-tag">→ Permit types</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">(via POST /work-permits)</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">no dedicated permit-type field - all POST /work-permits records use one generic type</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Architectural review committee approval<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -852,7 +852,7 @@
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Voting eligibility rules (good standing, one vote/unit)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /polls/{id}/vote, PAGE resident/Home.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /polls/{id}/vote, PAGE resident/Updates.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Resolution posting + voting<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -884,10 +884,10 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">(via POST /polls)</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Quorum tracking <span class="extends-tag">→ Polls</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Quorum tracking<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">(via POST /polls)</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">routes_community.py:1093 _quorum_met() computes voted/eligible against quorum_bps threshold, returned as quorum_met flag (routes_community.py:1470), PAGE admin/Board.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Board meeting calendar + RSVP <span class="extends-tag">→ Events</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -915,7 +915,7 @@
         <tbody>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Document repository (bylaws, house rules, financial reports)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">GET /api/documents, POST /api/documents, PAGE /operator/properties/[id]</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /documents, GET /documents, PAGE admin/Facilities.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Access control (board-only vs all-residents)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
@@ -972,15 +972,15 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">compliance/retention.py: default per-data-class retention (entry_events 730d, directory_access_log/complaints/deliveries 365d, visitor/service_passes 90d), purge_expired() runs time-based org-scoped purge that never touches financial/audit rows; GET /platform/retention, PUT/DELETE /orgs/{org_id}/retention/{data_class}, POST /orgs/{org_id}/retention/run</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Consent collection + management<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-planned">Planned</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Consent collection + management<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /me/accept-terms, POST /me/withdraw-consent, compliance/consent.py (purpose types, legal basis, audit trail with IP/user-agent)</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Privacy notice publication<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-planned">Planned</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Privacy notice publication<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">GET /policy/{kind}, routes_consent.py:55 (versioned privacy notice with SHA256 content hash)</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Data processing agreement (HOA ↔ platform)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-planned">Planned</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -1043,12 +1043,12 @@
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Ownership transfer processing <span class="extends-tag">→ Units</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">GET /api/leases, POST /api/leases (closest match)</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /units/{id}/transfers, GET /units/{id}/transfer-impact, PAGE admin/properties/PropertyTransfers.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Lease registration + expiry tracking <span class="extends-tag">→ Units</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">GET /api/leases, POST /api/leases, PAGE /operator/properties/[id]/leases</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">GET /api/leases only - no direct POST /api/leases route; creation happens through src/lib/copilot/skills/lease-management.ts (copilot tool call, not a page form)</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /leases, POST /leases/{id}/end, PAGE admin/Residents.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Vacancy tracking <span class="extends-tag">→ Units</span><span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-extend">Extend</span></td></tr>
@@ -1119,15 +1119,15 @@
       <div class="table-wrap"><table>
         <thead><tr><th>Operation</th><th style="text-align:right">Status</th></tr></thead>
         <tbody>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Org lifecycle (provision, suspend, archive)<span class="expand-chevron">&#8250;</span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Org lifecycle (provision, suspend, archive)<span class="expand-chevron">&#8250;</span></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">POST /api/organizations/create</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /platform/orgs, PATCH /platform/orgs/{id}/features, PAGE platform/PlatformOrgs.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">POST /api/organizations/create (provision only, no suspend/archive)</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /platform/orgs (provision only); OrgRow has no status field - no suspend/archive/deactivate mechanism exists, PAGE platform/PlatformOrgs.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Plan management (assign, upgrade, downgrade, overrides)<span class="expand-chevron">&#8250;</span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">(Subscription type in org domain)</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">PATCH /platform/orgs/{id}/plan, GET /platform/orgs/{id}/entitlements, PAGE platform/PlatformOrgs.tsx</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">src/lib/domain/organization.ts:11 - SubscriptionPlan hardcoded to "basic", no upgrade/downgrade endpoint</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">PATCH /platform/orgs/{id}/plan, PUT /orgs/{id}/features/{feature_key} (per-feature overrides), PAGE platform/PlatformOrgs.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Platform audit log review<span class="expand-chevron">&#8250;</span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -1251,20 +1251,20 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Reserve fund management (sinking fund)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Reserve fund management (sinking fund)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /transfer, routes_accounting.py:196 (moves funds between operating and reserve; no dedicated reserve-fund ledger or admin page found)</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Vendor/supplier payment tracking<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Vendor/supplier payment tracking<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">src/app/api/vendors/route.ts, src/lib/models/vendor.model.ts (vendor CRUD only - no payment status or payment history fields)</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /vendors, GET /vendors, POST /bills, POST /bills/{id}/pay, PAGE admin/Payables.tsx (tracks unpaid/partial/paid status per bill)</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Budget vs actual reporting<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Budget vs actual reporting<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">GET /budget-variance, routes_accounting.py:450 (returns ytd_actual/variance per fund/category; no admin UI page found to view it)</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Tax filing support (BIR compliance)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -1305,10 +1305,10 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Parking violation enforcement<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Parking violation enforcement<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">POST /api/violations (free-text rule field only - no dedicated parking category)</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">POST /violations, category="parking" enum value (schemas_community.py:109), PAGE admin/Community.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Second car waitlist<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -1336,7 +1336,7 @@
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Delinquency aging report<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">GET /api/ledger/summary</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">GET /api/properties/[id]/finances/summary (aging buckets: current/30d/60d/90d+)</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">GET /billing/aging, PAGE admin/Collections.tsx</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Access log report (entries/exits by date, gate, type)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
@@ -1374,9 +1374,9 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Export to Excel/PDF<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Export to Excel/PDF<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">GET /api/ledger/summary (CSV implied)</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">GET /api/ledger/export (CSV, Content-Type header)</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">GET /billing/report/monthly.csv</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Scheduled report email delivery<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
@@ -1400,8 +1400,8 @@
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Multi-language support<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-partial">Partial</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">src/app/layout.tsx:40 hardcoded lang="en" - no translation files or locale switching</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">apps/web/src/i18n/index.ts (i18next), locale dictionaries for en/fil/ceb, ag_lang localStorage key for runtime switching</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Notice board (digital signage)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -1478,7 +1478,7 @@
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Incident/accident report filing<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">no incident/accident category - POST /complaints (routes_community.py:447) categories are fixed to noise/maintenance/security/parking/billing/other only</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Claim tracking<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
@@ -1493,7 +1493,7 @@
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Emergency contact directory (fire, police, hospital)<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">only per-person contact fields via PATCH /people/{person_id} (routes_platform.py:817, emergency_contact_name/emergency_contact_phone) - not a community-wide directory of emergency services</span></div>
         </div></td></tr>
         </tbody>
       </table></div>
@@ -1581,14 +1581,14 @@
       <div class="table-wrap"><table>
         <thead><tr><th>Operation</th><th class="center">Admin</th><th class="center">Resident</th><th style="text-align:right">Status</th></tr></thead>
         <tbody>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Approved contractor/vendor directory<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Approved contractor/vendor directory<span class="expand-chevron">&#8250;</span></td><td class="center"><span class="dot"></span></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
-          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">GET /api/vendors, src/lib/models/vendor.model.ts (is_active field)</span></div>
+          <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-list">GET /vendors, PAGE admin/Payables.tsx (is_active field, org-scoped)</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Service provider rating/review<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">Review model only supports property_review/contact_rating types - no vendor_id field, not a service provider rating system</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Community marketplace (buy/sell/trade)<span class="expand-chevron">&#8250;</span></td><td class="center"></td><td class="center"><span class="dot"></span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
@@ -1625,9 +1625,9 @@
           <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
         </div></td></tr>
-          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Changelog / release notes publication<span class="expand-chevron">&#8250;</span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
+          <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Changelog / release notes publication<span class="expand-chevron">&#8250;</span></td><td class="status-cell"><span class="status status-built">Built</span></td></tr>
 <tr class="detail-row"><td colspan="10" class="detail-cell"><div class="route-groups">
-          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-absent">—</span></div>
+          <div class="route-group"><span class="route-src route-src-t">Tuluyan</span><span class="route-list">PAGE /changelog, src/lib/content.ts getChangelogEntries() reads content/changelog/*.mdx</span></div>
           <div class="route-group"><span class="route-src route-src-ag">AccessGates</span><span class="route-absent">—</span></div>
         </div></td></tr>
           <tr class="data-row" onclick="toggleDetail(this)"><td class="op">Tenant screening / background check integration<span class="expand-chevron">&#8250;</span></td><td class="status-cell"><span class="status status-none">Not started</span></td></tr>
